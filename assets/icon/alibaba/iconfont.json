@@ -1,0 +1,23 @@
+{
+  "id": "4450125",
+  "name": "xnote",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "7213073",
+      "name": "Image",
+      "font_class": "Image",
+      "unicode": "e66a",
+      "unicode_decimal": 58986
+    },
+    {
+      "icon_id": "1857393",
+      "name": "menu",
+      "font_class": "menu",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    }
+  ]
+}
