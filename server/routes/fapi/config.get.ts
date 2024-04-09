@@ -5,6 +5,5 @@ export default defineEventHandler(() => {
     serverUrl: process.env.API_SERVER_URL_FOR_CLIENT || "",
     icp: process.env.ICP || "",
   } as Config;
-  console.log(config);
   return config;
 });
