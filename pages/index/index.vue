@@ -3,6 +3,7 @@
 import type { Ref } from "vue";
 import NoteIsPublic from "~/enums/NoteIsPublic";
 import { pageNote } from "~/api/NoteApi";
+import type { Note } from "~/interfaces/entity/Note";
 
 const searchText = ref({
   title: "",
@@ -11,6 +12,8 @@ const searchText = ref({
 });
 
 watch(searchText.value, () => {
+  searchNoteLocked = false;
+  loading.value = true;
   debounceSearchNote();
 });
 
@@ -25,18 +28,31 @@ function getRouterParam() {
   searchText.value.keywords = keywords ? keywords : "";
 }
 
+// 搜索加锁以保证搜索不会重复请求
+let searchNoteLocked = false;
 const searchNote = async () => {
+  if (searchNoteLocked) {
+    loading.value = false;
+    return;
+  }
+  searchNoteLocked = true;
+
+  loading.value = true;
   await pageNote({
     current: page.value.current,
     list: [],
-    searchContent: "",
-    searchKeyword: "",
-    searchTitle: "",
+    searchContent: searchText.value.content,
+    searchKeyword: searchText.value.keywords,
+    searchTitle: searchText.value.title,
     size: page.value.size,
-  }).then((res) => {
-    page.value.list = res.data.list;
-    page.value.total = res.data.total || page.value.total;
-  });
+  })
+    .then((res) => {
+      page.value.list = res.data.list || [];
+      page.value.total = res.data.total || page.value.total;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 const debounceSearchNote = debounce(searchNote, 1.5);
 
@@ -58,7 +74,7 @@ const page: Ref<{
   total: number;
   current: number;
   size: number;
-  list: any[];
+  list: Note[];
   layout: string;
   sizes: number[];
   handleSizeChange: (value: number) => void;
@@ -88,6 +104,7 @@ const page: Ref<{
 });
 
 watch([() => page.value.current, () => page.value.size], () => {
+  searchNoteLocked = false;
   searchNote();
 });
 
@@ -105,17 +122,17 @@ onMounted(() => {
         <el-input
           v-model="searchText.title"
           placeholder="搜索标题"
-          @keyup.enter="debounceSearchNote"
+          @keyup.enter="searchNote"
         />
         <el-input
           v-model="searchText.keywords"
           placeholder="搜索关键词"
-          @keyup.enter="debounceSearchNote"
+          @keyup.enter="searchNote"
         />
         <el-input
           v-model="searchText.content"
           placeholder="搜索笔记内容"
-          @keyup.enter="debounceSearchNote"
+          @keyup.enter="searchNote"
         />
         <el-button type="primary" @click="searchNote">搜索</el-button>
       </div>
@@ -147,6 +164,7 @@ onMounted(() => {
           :layout="page.layout"
           v-model:current-page="page.current"
           v-model:page-size="page.size"
+          :disabled="loading"
           :page-sizes="page.sizes"
           :background="true"
           :total="page.total"
