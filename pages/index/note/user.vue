@@ -4,7 +4,7 @@ import {
   getNoteById,
   pageSelfNote,
   updateNote,
-} from "@/api/NoteApi.ts";
+} from "@/api/NoteApi";
 import type { Ref } from "vue";
 import type { NotePageDTO } from "~/interfaces/entity/dto/NotePageDTO";
 import type { Result } from "~/interfaces/Result";

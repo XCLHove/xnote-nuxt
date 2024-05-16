@@ -1,7 +1,7 @@
-import request from "~/utils/request.ts";
-import { Note } from "~/interfaces/entity/Note";
-import { NotePageDTO } from "~/interfaces/entity/dto/NotePageDTO";
-import { Result } from "~/interfaces/Result.ts";
+import request from "~/utils/request";
+import type { Note } from "~/interfaces/entity/Note";
+import type { NotePageDTO } from "~/interfaces/entity/dto/NotePageDTO";
+import type { Result } from "~/interfaces/Result";
 
 /**
  * 获取一篇笔记

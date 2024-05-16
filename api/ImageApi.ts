@@ -1,7 +1,7 @@
-import request from "~/utils/request.ts";
-import { Result } from "~/interfaces/Result.ts";
-import { Image } from "~/interfaces/entity/Image.ts";
-import { ImagePageDTO } from "~/interfaces/entity/dto/ImagePageDTO.ts";
+import request from "~/utils/request";
+import type { Result } from "~/interfaces/Result";
+import type { Image } from "~/interfaces/entity/Image";
+import type { ImagePageDTO } from "~/interfaces/entity/dto/ImagePageDTO";
 
 /**
  * 上传图片

@@ -10,7 +10,7 @@ const storeUser = useUser();
 
 const showDrawerMenu = ref(false);
 
-const { value: user }: { value: Ref<User | null> } = storeToRefs(storeUser);
+const { value: user } = storeToRefs(storeUser) as { value: Ref<User | null> };
 const avatarContent = computed(() => {
   return user.value?.name.substring(0, 1) || "登录";
 });

@@ -25,6 +25,7 @@ const getConfig = (() => {
     return () => {
       return new Promise<Config>((resolve) => {
         resolve({
+          // @ts-ignore
           serverUrl: getServerUrl(import.meta.env.MODE),
           icp: process.env.ICP || "",
         });
@@ -39,6 +40,7 @@ const getConfig = (() => {
         .get("/fapi/config")
         .then((res) => {
           const config = (res.data || {}) as Config;
+          // @ts-ignore
           config.serverUrl ||= getServerUrl(import.meta.env.MODE);
           resolve(config);
         })

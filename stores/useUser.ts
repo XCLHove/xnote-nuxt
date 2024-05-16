@@ -1,6 +1,6 @@
-import { User } from "@/interfaces/entity/User.ts";
-import LocalStorageKey from "@/enums/LocalStorageKey.ts";
-import { getUserSelfInfo, userLogout } from "~/api/UserApi.ts";
+import type { User } from "@/interfaces/entity/User";
+import LocalStorageKey from "@/enums/LocalStorageKey";
+import { getUserSelfInfo, userLogout } from "~/api/UserApi";
 import type { Ref } from "vue";
 
 export const useUser = defineStore("user", () => {

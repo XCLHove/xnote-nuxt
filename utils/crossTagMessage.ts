@@ -1,4 +1,4 @@
-import generateUUID from "./generateUUID.ts";
+import generateUUID from "~/utils/generateUUID";
 
 export const newSetItemEventType = "newSetItemEvent";
 

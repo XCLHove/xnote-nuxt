@@ -1,9 +1,8 @@
-import { elPrompt } from "./elPrompt.ts";
-import getLocalStorage from "./getLocalStorage.ts";
-import ResultStatus from "../enums/ResultStatus.ts";
-import LocalStorageKey from "../enums/LocalStorageKey.ts";
-import RequestHeaderKey from "../enums/RequestHeaderKey.ts";
-import { Result } from "@/interfaces/Result.ts";
+import { elPrompt } from "./elPrompt";
+import ResultStatus from "../enums/ResultStatus";
+import LocalStorageKey from "../enums/LocalStorageKey";
+import RequestHeaderKey from "../enums/RequestHeaderKey";
+import type { Result } from "@/interfaces/Result";
 import type { AxiosInstance, AxiosResponse } from "axios";
 import axios from "axios";
 

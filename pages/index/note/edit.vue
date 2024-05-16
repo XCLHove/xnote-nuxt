@@ -24,7 +24,7 @@ const keywordInput = ref("");
 /**获取笔记，发布新笔记时不会获取*/
 const getNote = async () => {
   // 从url获取笔记id
-  const { noteId } = <string>useRoute().query;
+  const { noteId } = useRoute().query as { noteId: string };
   if (!noteId) {
     return;
   }
@@ -39,7 +39,7 @@ const getNote = async () => {
   });
 };
 
-let vditor: Vditor = void 0;
+let vditor: Vditor | null = null;
 const vditorCacheId = "vditorCacheId";
 process.client &&
   onMounted(() => {
@@ -49,7 +49,7 @@ process.client &&
         width: "100%",
         height: window.innerHeight - 300,
         after() {
-          note.value.content && vditor.setValue(note.value.content);
+          note.value.content && vditor?.setValue(note.value.content);
         },
         cache: {
           id: vditorCacheId,
@@ -65,7 +65,7 @@ process.client &&
 
 /**保存笔记*/
 const save = async () => {
-  note.value.content = vditor.getValue();
+  note.value.content = vditor?.getValue() || "";
 
   // 检查访问码格式
   if (!validateAccessCode()) return;
@@ -87,8 +87,9 @@ const save = async () => {
         saveStatus.value = SaveStatus.saved;
       });
     }
-  } catch (e: Result<any>) {
-    if (e.status === ResultStatus.USER_TOKEN_EXCEPTION) {
+  } catch (e: any) {
+    const res = e as Result<any>;
+    if (res.status === ResultStatus.USER_TOKEN_EXCEPTION) {
       saveStatus.value = SaveStatus.unSave;
       const remove = onLogin(() => {
         save();
@@ -155,7 +156,7 @@ const handleUploadImage = (async () => {
       await uploadImage(imageFile).then((result) => {
         const image = result.data;
         const imageUrl = `${serverUrl}/image/downloadByName/${image.name}`;
-        vditor.setValue(vditor.getValue() + `![${image.name}](${imageUrl})`);
+        vditor?.setValue(vditor.getValue() + `![${image.name}](${imageUrl})`);
       });
     }
     return "";

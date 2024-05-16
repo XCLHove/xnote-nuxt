@@ -1,6 +1,6 @@
-import LocalStorageKey from "../enums/LocalStorageKey.ts";
-import { elPrompt } from "@/utils/elPrompt.ts";
-import afterSetItem from "@/utils/afterSetItem.ts";
+import LocalStorageKey from "../enums/LocalStorageKey";
+import { elPrompt } from "@/utils/elPrompt";
+import afterSetItem from "@/utils/afterSetItem";
 
 type Task = () => void;
 let onLoginTask: Task[] = [];

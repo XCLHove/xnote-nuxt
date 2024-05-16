@@ -1,7 +1,7 @@
-import request from "~/utils/request.ts";
-import { UserDTO } from "~/interfaces/entity/dto/UserDTO";
-import { Result } from "~/interfaces/Result.ts";
-import { User } from "~/interfaces/entity/User.ts";
+import request from "~/utils/request";
+import type { UserDTO } from "~/interfaces/entity/dto/UserDTO";
+import type { Result } from "~/interfaces/Result";
+import type { User } from "~/interfaces/entity/User";
 
 /**
  * 用户登录函数

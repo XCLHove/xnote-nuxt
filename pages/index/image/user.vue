@@ -4,7 +4,7 @@ import {
   downloadImageById,
   pageImageList,
   updateImage,
-} from "@/api/ImageApi.ts";
+} from "@/api/ImageApi";
 import type { Image } from "~/interfaces/entity/Image";
 import type { Ref } from "vue";
 

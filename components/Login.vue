@@ -63,6 +63,8 @@ const showRegister = () => {
   useShowUserLogin().hide();
   useShowUserRegister().show();
 };
+
+const showUserLoginStore = useShowUserLogin();
 </script>
 
 <template>
@@ -73,7 +75,7 @@ const showRegister = () => {
       :center="true"
       width="350"
       top="35vh"
-      @close="useShowUserLogin().hide()"
+      @close="showUserLoginStore.hide()"
     >
       <el-form
         :status-icon="true"
