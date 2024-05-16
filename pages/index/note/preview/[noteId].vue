@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import ResultStatus from "~/enums/ResultStatus";
 import { getNoteById } from "~/api/NoteApi";
-import Vditor from "vditor";
+import VditorPreview from "vditor/dist/method.min";
 import "vditor/src/assets/less/index.less";
 import type { Ref } from "vue";
 
 // 路由参数
-let { noteId }: { noteId: string; accessCode: string } = useRoute().params;
-let { accessCode }: { accessCode: string } = useRoute().query;
+let { noteId } = useRoute().params as { noteId: string };
+let { accessCode } = useRoute().query as { accessCode: string };
 
 // 访问码
 let needInputAccessCode = false;
@@ -24,16 +24,16 @@ const showNote = ref(false);
 process.client &&
   onMounted(() => {
     note.value.content &&
-      Vditor.preview(noteContent.value, note.value.content, {
+      VditorPreview.preview(noteContent.value, note.value.content, {
         mode: "light",
-        cdn: "/cdn/vditor",
+        cdn: `${location.origin}/cdn/vditor`,
       }).then(() => (showNote.value = true));
 
     const removeWatch = watch(
       () => note.value.content,
       () => {
         if (!note.value.content) return;
-        Vditor.preview(noteContent.value, note.value.content, {
+        VditorPreview.preview(noteContent.value, note.value.content, {
           mode: "light",
           cdn: "/cdn/vditor",
         }).then(() => (showNote.value = true));

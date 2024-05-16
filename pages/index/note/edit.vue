@@ -45,7 +45,7 @@ process.client &&
   onMounted(() => {
     getNote().then(() => {
       vditor = new Vditor("vditor", {
-        cdn: "/cdn/vditor",
+        cdn: `${location.origin}/cdn/vditor`,
         width: "100%",
         height: window.innerHeight - 300,
         after() {
