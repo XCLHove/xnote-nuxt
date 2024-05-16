@@ -71,9 +71,12 @@ export function userRegister(registerInfo: UserDTO) {
  */
 export function getUserSelfInfo() {
   return new Promise<Result<User>>((resolve, reject) => {
-    request.get("/users/self").then(({ data }) => {
-      resolve(data);
-    });
+    request
+      .get("/users/self")
+      .then(({ data }) => {
+        resolve(data);
+      })
+      .catch(reject);
   });
 }
 

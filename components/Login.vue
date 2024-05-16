@@ -13,7 +13,7 @@ const formRef = ref<FormInstance>();
 const formValidateRules = ref<FormRules<typeof user>>({
   account: [
     {
-      validator(rule, value, callback, source, options) {
+      validator(rule, value, callback, _, __) {
         const regExp = /^[a-zA-Z0-9]{6,30}$/;
         if (!regExp.test(value)) {
           callback(new Error("仅支持6-30位的数字字母"));
@@ -26,7 +26,7 @@ const formValidateRules = ref<FormRules<typeof user>>({
   ],
   password: [
     {
-      validator(rule, value, callback, source, options) {
+      validator(rule, value, callback, _, __) {
         const regExp = /^[a-zA-Z0-9.*_]{6,128}$/;
         if (!regExp.test(value)) {
           callback(new Error("仅支持6-128位的数字、字母、'.'、'*'和'_'"));
