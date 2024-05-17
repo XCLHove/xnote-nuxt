@@ -12,7 +12,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview --dotenv .env",
     "postinstall": "nuxt prepare",
-    "build && preview": "npm run build && npm run preview"
+    "build && preview": "npm run build && npm run preview",
+    "copyDeployFileToOutput": "node copyDeployFile.js"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
@@ -20,6 +21,7 @@
     "nuxt": "^3.11.1",
     "nuxt-precompress": "^0.5.9",
     "pinia": "^2.1.7",
+    "rollup-plugin-copy": "^3.5.0",
     "vditor": "^3.10.2",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
