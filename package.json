@@ -6,14 +6,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
+    "build": "nuxt build && npm run copyDeployFileToOutput",
     "dev": "nuxt dev",
     "format": "npx prettier . --write",
     "generate": "nuxt generate",
     "preview": "nuxt preview --dotenv .env",
     "postinstall": "nuxt prepare",
     "build && preview": "npm run build && npm run preview",
-    "copyDeployFileToOutput": "node copyDeployFile.js"
+    "copyDeployFileToOutput": "node copyDeployFileToOutput.js"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.5.1",
