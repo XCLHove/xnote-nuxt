@@ -1,173 +1,224 @@
 <script setup lang="ts">
 import type { Ref } from "vue";
-import type { User } from "~/interfaces/entity/User";
-import { userLogout } from "~/api/UserApi";
-import LocalStorageKey from "~/enums/LocalStorageKey";
+import { pageNote } from "~/api/NoteApi";
+import type { Note } from "~/interfaces/entity/Note";
+import "element-plus/dist/index.css";
+import NoteIsPublic from "~/enums/NoteIsPublic";
+import onClient from "~/utils/onClient";
 
-const storeShowUserLogin = useShowUserLogin();
-const storeShowUserRegister = useShowUserRegister();
-const storeUser = useUser();
-
-const showDrawerMenu = ref(false);
-
-const { value: user } = storeToRefs(storeUser) as { value: Ref<User | null> };
-const avatarContent = computed(() => {
-  return user.value?.name.substring(0, 1) || "登录";
-});
-
-const { width: windowWidth } = useWindowSize();
-const showAsideMenu = computed(() => {
-  return windowWidth.value > 450;
-});
-
-/**用户登出*/
-const logout = () => {
-  userLogout().then((res) => {
-    elPrompt.success(res.message);
-    localStorage.removeItem(LocalStorageKey.TOKEN);
+// 表格高度
+const tableHeight = (() => {
+  const { height } = useWindowSize();
+  return computed(() => {
+    return height.value - 210;
   });
+})();
+// 是否加载(搜索)中
+const loading = ref(false);
+
+// 搜索文本
+const searchText = ref({
+  title: "",
+  content: "",
+  keywords: "",
+});
+watch(searchText.value, () => {
+  searchNoteLocked = false;
+  loading.value = true;
+  debounceSearchNote();
+});
+
+/** 获取路由参数 */
+const getRouterParam = () => {
+  const { title, content, keywords } = useRoute().query as {
+    title: string;
+    keywords: string;
+    content: string;
+  };
+  searchText.value.title = title || "";
+  searchText.value.content = content || "";
+  searchText.value.keywords = keywords || "";
 };
+
+// 搜索加锁以保证搜索不会重复请求
+let searchNoteLocked = false;
+/** 搜索笔记 */
+const searchNote = async () => {
+  if (searchNoteLocked) {
+    loading.value = false;
+    return;
+  }
+  searchNoteLocked = true;
+
+  loading.value = true;
+  await pageNote({
+    current: page.value.current,
+    size: page.value.size,
+    searchContent: searchText.value.content,
+    searchKeyword: searchText.value.keywords,
+    searchTitle: searchText.value.title,
+  })
+    .then((res) => {
+      notes.value = res.data.list || [];
+      page.value.total = res.data.total || page.value.total;
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+};
+/** 搜索笔记防抖 */
+const debounceSearchNote = debounce(searchNote, 1.5);
+
+/** 分页 */
+const page: Ref<{
+  total: number;
+  current: number;
+  size: number;
+  layout: string;
+  sizes: number[];
+  handleSizeChange: (value: number) => void;
+  handleCurrentChange: (value: number) => void;
+}> = ref({
+  total: 0,
+  current: 1,
+  size: 10,
+  layout: computed(() => {
+    const type = {
+      phone: "total, sizes, prev, next",
+      computer: "total, sizes, prev, pager, next, jumper",
+    };
+    if (useDevice().isDesktop) return type.computer;
+    return type.phone;
+  }),
+  sizes: computed(() => getSizes(page.value.total)),
+  handleSizeChange: (value: number) => {
+    page.value.size = value;
+  },
+  handleCurrentChange: (value: number) => {
+    page.value.current = value;
+  },
+});
+watch([() => page.value.current, () => page.value.size], () => {
+  searchNoteLocked = false;
+  searchNote();
+});
+
+/** 笔记列表 */
+const notes: Ref<Note[]> = ref([]);
+
+/**
+ * 预览笔记
+ * @param noteId 笔记id
+ */
+const preview = (noteId: number) => {
+  const url = `${window.location.origin}/note/preview/${noteId}`;
+  window.open(url, "_blank");
+};
+
+onClient(() => {
+  onMounted(() => {
+    getRouterParam();
+    searchNote();
+  });
+});
 </script>
 
 <template>
-  <Login />
-  <Register />
-  <div class="layout">
-    <el-container>
-      <!--头部-->
-      <el-header>
-        <client-only>
-          <div class="head">
-            <i
-              class="menu-button iconfont icon-menu"
-              v-if="!showAsideMenu"
-              @click="showDrawerMenu = true"
-            />
-            <h1>XNote</h1>
-            <div class="avatar">
-              <el-dropdown>
-                <el-avatar>
-                  <div>{{ avatarContent }}</div>
-                </el-avatar>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item
-                      v-if="!user"
-                      @click="storeShowUserLogin.show()"
-                      >登录</el-dropdown-item
-                    >
-                    <el-dropdown-item
-                      v-if="!user"
-                      @click="storeShowUserRegister.show()"
-                      >注册</el-dropdown-item
-                    >
-                    <el-dropdown-item v-if="user" @click="logout"
-                      >注销</el-dropdown-item
-                    >
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </div>
-          </div>
-        </client-only>
-      </el-header>
-      <el-container>
-        <!--菜单-->
-        <client-only>
-          <div class="menu">
-            <!--宽屏-->
-            <div class="aside" v-if="showAsideMenu">
-              <el-aside>
-                <Menu />
-              </el-aside>
-            </div>
-            <!--窄屏-->
-            <div class="drawer" v-else>
-              <el-drawer
-                v-model="showDrawerMenu"
-                title="菜单"
-                size="150"
-                direction="ltr"
+  <div class="container">
+    <!--搜索输入框-->
+    <div class="search-part">
+      <el-input
+        v-model="searchText.title"
+        placeholder="搜索标题"
+        @keyup.enter="searchNote"
+      />
+      <el-input
+        v-model="searchText.keywords"
+        placeholder="搜索关键词"
+        @keyup.enter="searchNote"
+      />
+      <el-input
+        v-model="searchText.content"
+        placeholder="搜索笔记内容"
+        @keyup.enter="searchNote"
+      />
+      <el-button type="primary" @click="searchNote">搜索</el-button>
+    </div>
+    <!--数据展示-->
+    <client-only>
+      <div class="table-data" v-loading="loading">
+        <el-table :data="notes" :height="tableHeight">
+          <el-table-column prop="title" label="笔记">
+            <template #default="scope">
+              <el-link @click="preview(scope.row.id)" target="_blank">
+                {{ scope.row.title }}
+              </el-link>
+            </template>
+          </el-table-column>
+          <el-table-column prop="isPublic" label="是否公开" width="80">
+            <template #default="scope">
+              <el-tag
+                :type="
+                  scope.row.isPublic === NoteIsPublic.YES ? 'success' : 'danger'
+                "
+                >{{ scope.row.isPublic }}</el-tag
               >
-                <Menu />
-              </el-drawer>
-            </div>
-          </div>
-        </client-only>
-        <!--main-->
-        <el-main>
-          <el-scrollbar>
-            <div class="view">
-              <RouterView />
-            </div>
-          </el-scrollbar>
-        </el-main>
-      </el-container>
-    </el-container>
-    <!--footer-->
-    <Footer />
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </client-only>
+    <!--分页-->
+    <div class="page">
+      <el-pagination
+        :layout="page.layout"
+        v-model:current-page="page.current"
+        v-model:page-size="page.size"
+        :disabled="loading"
+        :page-sizes="page.sizes"
+        :background="true"
+        :total="page.total"
+        @size-change="page.handleSizeChange"
+        @current-change="page.handleCurrentChange"
+      />
+    </div>
   </div>
 </template>
 
-<style scoped lang="less">
-.layout {
-  width: 100%;
+<style lang="less" scoped>
+.container {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 
-  .el-container {
-    width: 100%;
-    height: 100%;
+  .search-part {
+    display: flex;
+    text-align: center;
+    margin: 10px 0;
 
-    .el-header {
-      border-bottom: @color-lightGray 1px solid;
-
-      .head {
-        .flex();
-        align-items: center;
-
-        .menu-button {
-          margin-right: 10px;
-
-          &:hover {
-            transition: color linear 0.2s;
-          }
-        }
-
-        h1 {
-          margin: 15px 0;
-        }
-
-        .avatar {
-          font-size: 25px;
-          position: absolute;
-          right: 15px;
-        }
-      }
+    .el-input {
+      margin-right: 10px;
     }
+  }
 
-    .el-container {
-      .menu {
-        .aside {
-          width: 120px;
-          height: calc(100vh - 90px);
-          border-right: @color-lightGray solid 1px;
-
-          .el-aside {
-            width: 100%;
-          }
-        }
-      }
-
-      .el-main {
-        .el-scrollbar {
-          height: calc(100vh - 120px);
-
-          .view {
-            width: 99%;
-          }
-        }
-      }
+  .note-list {
+    .note-row {
+      border-bottom: 1px solid var(--el-border-color);
+      margin: 0;
+      font-size: 2em;
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
+  }
+
+  .table-data {
+    display: block;
+  }
+
+  .page {
+    margin-top: 5px;
   }
 }
 </style>
