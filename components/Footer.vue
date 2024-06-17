@@ -16,8 +16,8 @@ onMounted(async () => {
       <a target="_blank" href="https://github.com/xclhove/xnote-springboot"
         >xnote(springboot)</a
       >&
-      <a target="_blank" href="https://github.com/xclhove/xnote-vue"
-        >xnote(vue)</a
+      <a target="_blank" href="https://github.com/xclhove/xnote-nuxt"
+        >xnote(nuxt)</a
       >
     </span>
     <span class="icp" v-if="icp"
