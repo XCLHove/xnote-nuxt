@@ -9,6 +9,9 @@ import "vditor/src/assets/less/index.less";
 import type { Result } from "~/interfaces/Result";
 import ResultStatus from "~/enums/ResultStatus";
 
+// 剪贴板
+const { copy } = useClipboard();
+
 /**当前正在编辑的笔记*/
 const note: Ref<Note> = ref({
   title: "",
@@ -18,55 +21,137 @@ const note: Ref<Note> = ref({
   accessCode: "",
 });
 
+/**监听笔记变化*/
+const watchNoteChange = (() => {
+  let watched = false;
+  return () => {
+    if (watched) return;
+    watched = true;
+    watch(note.value, () => {
+      saveStatus.value = SaveStatus.unSave;
+    });
+  };
+})();
+
+// 笔记存储状态
+const SaveStatus = {
+  unSave: {
+    type: "info",
+    description: "点我保存",
+  },
+  saving: {
+    type: "warning",
+    description: "正在保存",
+  },
+  saved: {
+    type: "success",
+    description: "无需保存",
+  },
+  failed: {
+    type: "danger",
+    description: "保存失败",
+  },
+};
+const saveStatus = ref(SaveStatus.unSave);
+
+/**是否展示关键词*/
+const showKeywords = computed(() => {
+  return note.value.keywords?.length > 0;
+});
+
 /**输入的关键词*/
 const keywordInput = ref("");
 
 /**获取笔记，发布新笔记时不会获取*/
 const getNote = async () => {
-  // 从url获取笔记id
-  const { noteId } = useRoute().query as { noteId: string };
-  if (!noteId) {
-    return;
-  }
+  // 解析url中的参数
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const noteId = urlSearchParams.get("noteId");
+
+  if (!noteId) return;
   note.value.id = parseInt(noteId);
 
   // 通过笔记id获取笔记
   await getNoteById({
     noteId: note.value.id,
-    accessCode: "",
-  }).then((result) => {
-    note.value = result.data;
+  }).then(({ data }) => {
+    note.value = data;
+    saveStatus.value = SaveStatus.saved;
   });
 };
 
 let vditor: Vditor | null = null;
-const vditorCacheId = "vditorCacheId";
-process.client &&
-  onMounted(() => {
+/**渲染markdown编辑器*/
+const renderMarkdownEditor = () => {
+  vditor = new Vditor("vditor", {
+    cdn: `${location.origin}/cdn/vditor`,
+    width: "100%",
+    height: window.innerHeight - 300,
+    after() {
+      vditor?.setValue(note.value.content || "");
+    },
+    cache: {
+      enable: false,
+    },
+    upload: {
+      async handler(files: File[]): Promise<string> {
+        return (await handleUploadImage)(files);
+      },
+    },
+    input(value: string) {
+      note.value.content = value;
+    },
+    toolbar: [
+      "emoji",
+      "headings",
+      "bold",
+      "italic",
+      "strike",
+      "link",
+      "|",
+      "list",
+      "ordered-list",
+      "check",
+      "outdent",
+      "indent",
+      "|",
+      "quote",
+      "line",
+      "code",
+      "inline-code",
+      "insert-before",
+      "insert-after",
+      "|",
+      "upload",
+      "table",
+      "|",
+      "undo",
+      "redo",
+      "|",
+      "fullscreen",
+      "edit-mode",
+      {
+        name: "more",
+        toolbar: ["export", "outline", "preview"],
+      },
+    ],
+    image: {
+      isPreview: false,
+    },
+  });
+};
+
+onMounted(() => {
+  onClient(() => {
     getNote().then(() => {
-      vditor = new Vditor("vditor", {
-        cdn: `${location.origin}/cdn/vditor`,
-        width: "100%",
-        height: window.innerHeight - 300,
-        after() {
-          note.value.content && vditor?.setValue(note.value.content);
-        },
-        cache: {
-          id: vditorCacheId,
-        },
-        upload: {
-          async handler(files: File[]): Promise<string> {
-            return (await handleUploadImage)(files);
-          },
-        },
-      });
+      renderMarkdownEditor();
+      watchNoteChange();
     });
   });
+});
 
 /**保存笔记*/
 const save = async () => {
-  note.value.content = vditor?.getValue() || "";
-
   // 检查访问码格式
   if (!validateAccessCode()) return;
 
@@ -75,36 +160,38 @@ const save = async () => {
   //开始保存笔记，id存在则为修改，不存在则为保存
   try {
     if (note.value.id) {
+      // 修改笔记
       await updateNote(note.value).then(() => {
         elPrompt.success("修改成功！");
         saveStatus.value = SaveStatus.saved;
+        vditor?.clearCache();
       });
     } else {
-      await addNote(note.value).then((result) => {
-        note.value.id = result.data.id;
-        note.value.title ||= result.data.title;
+      // 新建笔记
+      await addNote(note.value).then(({ data }) => {
+        note.value.id = data.id;
+        note.value.title ||= data.title;
         elPrompt.success("保存成功！");
         saveStatus.value = SaveStatus.saved;
+        vditor?.clearCache();
       });
     }
   } catch (e: any) {
     const res = e as Result<any>;
+    // 用户未登录或登录失效
     if (res.status === ResultStatus.USER_TOKEN_EXCEPTION) {
       saveStatus.value = SaveStatus.unSave;
-      const remove = onLogin(() => {
+      // 监听登录事件，登录后保存笔记
+      const removeLoginListener = onLogin(() => {
         save();
-        remove();
+        // 移除监听器
+        removeLoginListener();
       });
       return;
     }
     saveStatus.value = SaveStatus.failed;
   }
 };
-
-/**是否展示关键词*/
-const showKeywords = computed(() => {
-  return note.value.keywords?.length > 0;
-});
 
 /**添加关键词*/
 const addKeyword = () => {
@@ -147,174 +234,117 @@ const handleUploadImage = (async () => {
   const { serverUrl } = await getConfig();
 
   return async (files: File[]) => {
+    let mdImageUrl = "";
     for (const imageFile of files) {
+      // 检查图片大小
       if (imageFile.size > Math.pow(1024, 2) * 10) {
         elPrompt.warning("图片不能超过10MB");
         continue;
       }
 
-      await uploadImage(imageFile).then((result) => {
-        const image = result.data;
+      // 上传图片
+      await uploadImage(imageFile).then(({ data: image }) => {
         const imageUrl = `${serverUrl}/image/downloadByName/${image.name}`;
-        vditor?.setValue(vditor.getValue() + `![${image.name}](${imageUrl})`);
+        mdImageUrl += `![${image.name}](${imageUrl})`;
       });
     }
-    return "";
+
+    // 复制图片url到剪贴板
+    await copy(mdImageUrl).then(() => {
+      elPrompt.success("图片url已复制到剪贴板，请粘贴到Markdown中");
+    });
+
+    return mdImageUrl;
   };
 })();
-
-// 笔记存储状态
-const SaveStatus = {
-  unSave: {
-    type: "info",
-    description: "未保存",
-  },
-  saving: {
-    type: "warning",
-    description: "保存中",
-  },
-  saved: {
-    type: "success",
-    description: "保存成功",
-  },
-  failed: {
-    type: "danger",
-    description: "保存失败",
-  },
-};
-const saveStatus = ref(SaveStatus.unSave);
-watch(
-  () => note.value,
-  () => {
-    saveStatus.value = SaveStatus.unSave;
-  },
-);
 
 /**
  * 验证访问码的格式
  * @return {boolean} 验证是否通过
  */
-const validateAccessCode = () => {
+const validateAccessCode = (): boolean => {
   const reg = /^[a-zA-Z0-9]{0,20}$/;
-  const validatePass = reg.test(<string>note.value.accessCode);
+  const validatePass = reg.test(note.value.accessCode || "");
   if (!validatePass) {
     elPrompt.error("访问码仅支持不超过20位的数字和字母", 2);
   }
   return validatePass;
 };
-
-// 预览图片
-const imagePreview: Ref<{ show: boolean; src: string; alt?: string }> = ref({
-  show: false,
-  src: "",
-  alt: "",
-});
-process.client &&
-  onMounted(() => {
-    const previewListener = () => {
-      const listener = (e: MouseEvent) => {
-        const target = e.target as HTMLElement;
-        if (target.tagName.toLowerCase() !== "img") return;
-
-        const imgEl = target as HTMLImageElement;
-        imagePreview.value.src = imgEl.src;
-        imagePreview.value.alt = imgEl.alt;
-        imagePreview.value.show = true;
-      };
-      window.addEventListener("click", listener);
-
-      return () => {
-        window.removeEventListener("click", listener);
-      };
-    };
-    const removePreviewListener = previewListener();
-    onUnmounted(() => {
-      removePreviewListener();
-    });
-  });
 </script>
 
 <template>
-  <client-only>
-    <div class="edit">
-      <!--标题输入框-->
-      <div class="edit-item">
-        <div class="edit">
-          <el-input v-model="note.title" inline="true" placeholder="标题" />
-        </div>
-        <div class="save-status">
-          <el-tag size="large" :type="saveStatus.type" @click="save">{{
-            saveStatus.description
-          }}</el-tag>
-        </div>
+  <div class="edit">
+    <!--标题输入框-->
+    <div class="edit-item">
+      <div class="edit">
+        <el-input v-model="note.title" inline="true" placeholder="标题" />
       </div>
-      <!--关键词输入框-->
-      <div class="edit-item">
-        <div class="edit">
-          <el-input
-            placeholder="关键词"
-            v-model="keywordInput"
-            @keydown.enter="addKeyword"
-          ></el-input>
-        </div>
-        <div class="operation">
-          <el-button type="primary" @click="addKeyword">添加关键词</el-button>
-        </div>
+      <div class="save-status">
+        <el-tag size="large" :type="saveStatus.type" @click="save">{{
+          saveStatus.description
+        }}</el-tag>
       </div>
-      <!--是否公开笔记-->
-      <div class="edit-item is-public">
-        <div class="edit">
-          <el-input
-            v-model="note.accessCode"
-            placeholder="访问码为空则不可被其他用户搜索"
-            :disabled="note.isPublic === NoteIsPublic.YES"
-            @blur="validateAccessCode"
+    </div>
+    <!--关键词输入框-->
+    <div class="edit-item">
+      <div class="edit">
+        <el-input
+          placeholder="关键词"
+          v-model="keywordInput"
+          @keydown.enter="addKeyword"
+        ></el-input>
+      </div>
+      <div class="operation">
+        <el-button type="primary" @click="addKeyword">添加关键词</el-button>
+      </div>
+    </div>
+    <!--是否公开笔记-->
+    <div class="edit-item is-public">
+      <div class="edit">
+        <el-input
+          v-model="note.accessCode"
+          placeholder="访问码为空则不可被其他用户搜索"
+          :disabled="note.isPublic === NoteIsPublic.YES"
+          @blur="validateAccessCode"
+        />
+      </div>
+      <div class="operation">
+        <div class="switch">
+          <el-switch
+            v-model="note.isPublic"
+            inline-prompt
+            size="large"
+            :active-value="NoteIsPublic.YES"
+            :active-text="NoteIsPublic.YES"
+            :inactive-value="NoteIsPublic.NO"
+            :inactive-text="NoteIsPublic.NO"
           />
         </div>
-        <div class="operation">
-          <div class="switch">
-            <el-switch
-              v-model="note.isPublic"
-              inline-prompt
-              size="large"
-              :active-value="NoteIsPublic.YES"
-              :active-text="NoteIsPublic.YES"
-              :inactive-value="NoteIsPublic.NO"
-              :inactive-text="NoteIsPublic.NO"
-            />
-          </div>
-        </div>
       </div>
-      <!--关键词展示-->
-      <div v-show="showKeywords" class="show-keywords">
-        <el-scrollbar height="32px">
-          <el-tag
-            v-for="keyword in note.keywords"
-            :key="keyword"
-            closable
-            type="success"
-            @close="removeKeyword(keyword)"
-          >
-            {{ keyword }}
-          </el-tag>
-        </el-scrollbar>
-      </div>
-      <!--没有关键词时的展示-->
-      <div v-show="!showKeywords" class="show-keywords no-keywords">
-        <el-text type="info">暂无关键词</el-text>
-      </div>
-      <!--笔记编辑区域-->
-      <div class="markdown">
-        <div id="vditor"></div>
-      </div>
-      <!--图片预览-->
-      <ImagePreview
-        v-model:show="imagePreview.show"
-        v-model:src="imagePreview.src"
-        v-model:alt="imagePreview.alt"
-      />
     </div>
-  </client-only>
+    <!--关键词展示-->
+    <div v-show="showKeywords" class="show-keywords">
+      <el-scrollbar height="32px">
+        <el-tag
+          v-for="keyword in note.keywords"
+          :key="keyword"
+          closable
+          type="success"
+          @close="removeKeyword(keyword)"
+        >
+          {{ keyword }}
+        </el-tag>
+      </el-scrollbar>
+    </div>
+    <!--没有关键词时的展示-->
+    <div v-show="!showKeywords" class="show-keywords no-keywords">
+      <el-text type="info">暂无关键词</el-text>
+    </div>
+    <!--笔记编辑区域-->
+    <div class="markdown">
+      <div id="vditor"></div>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="less">
