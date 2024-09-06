@@ -1,0 +1,31 @@
+{
+  "name": "xnote",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "copyDeployFileToOutput": "node copyDeployFileToOutput.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.4",
+    "dompurify": "^3.1.6",
+    "nuxt": "^3.11.1",
+    "vditor": "^3.10.5",
+    "vue": "latest"
+  },
+  "devDependencies": {
+    "@element-plus/nuxt": "^1.0.8",
+    "@pinia/nuxt": "^0.5.3",
+    "@types/dompurify": "^3.0.5",
+    "@vueuse/nuxt": "^10.11.1",
+    "element-plus": "2.7.7",
+    "less": "^4.2.0",
+    "less-loader": "^12.2.0",
+    "prettier": "^3.3.3",
+    "vite-plugin-top-level-await": "^1.4.4"
+  }
+}
