@@ -2,7 +2,6 @@
 import Vditor from 'vditor'
 import 'vditor/src/assets/less/index.less'
 import type { Ref } from 'vue'
-import save from '~/assets/icon/save.svg'
 import { uploadImageApi } from '~/apis/imageApi'
 
 const emit = defineEmits(['save'])
