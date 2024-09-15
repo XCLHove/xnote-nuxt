@@ -63,17 +63,6 @@ onMounted(() => {
       modelValue.value = value
     },
     toolbar: [
-      {
-        hotkey: 'Ctrl+S',
-        name: 'save',
-        tipPosition: 'n',
-        tip: '保存',
-        className: 'right',
-        icon: save,
-        click() {
-          emit('save')
-        },
-      },
       'headings',
       'bold',
       'italic',
