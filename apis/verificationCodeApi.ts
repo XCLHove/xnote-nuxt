@@ -1,14 +1,10 @@
 import type { Result } from '~/types/Result'
 
-export const sendVerificationCodeToEmailApi = (
-  email: string,
-  imageCode: string,
-) => {
+export const sendVerificationCodeToEmailApi = (email: string) => {
   return ajax
     .get('/verification-code/send/to-email', {
       params: {
         email,
-        imageCode,
       },
     })
     .then(({ data }: { data: Result<number> }) => data)

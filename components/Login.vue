@@ -151,54 +151,19 @@ const hasSentVerificationCode = computed(
   () => verificationCodeEffectiveSecond.value > 0,
 )
 const sendVerificationCode = () => {
-  getVerificationCodeImageBase64Api().then(({ data: imageBase64 }) => {
-    ElMessageBox.prompt('发送验证码到邮箱', {
-      title: '发送验证码到邮箱',
-      confirmButtonText: '发送验证码',
-      cancelButtonText: '取消',
-      inputPlaceholder: '输入图片中的验证码',
-      inputPattern: /^\S+$/,
-      inputErrorMessage: '请输入正确的图片验证码',
-      message: () =>
-        h(
-          ElTooltip,
-          {
-            content: '点击刷新验证码',
-            placement: 'right',
-          },
-          () =>
-            h('img', {
-              src: imageBase64,
-              alt: '验证码',
-              onClick: (e) => {
-                e.preventDefault()
-                getVerificationCodeImageBase64Api().then(
-                  ({ data: newImageBase64 }) => {
-                    ;(e.target as HTMLImageElement).src = newImageBase64
-                  },
-                )
-              },
-            }),
-        ),
-    })
-      .then(({ value: imageCode }) => {
-        sendVerificationCodeToEmailApi(
-          registerForm.value.email,
-          imageCode,
-        ).then(({ data: effectiveSecond }) => {
-          ElMessage.success('发送成功')
-          verificationCodeEffectiveSecond.value = effectiveSecond
-          const timer = setInterval(() => {
-            if (verificationCodeEffectiveSecond.value <= 0) {
-              clearInterval(timer)
-              return
-            }
-            verificationCodeEffectiveSecond.value--
-          }, 1000)
-        })
-      })
-      .catch(() => {})
-  })
+  sendVerificationCodeToEmailApi(registerForm.value.email).then(
+    ({ data: effectiveSecond }) => {
+      ElMessage.success('发送成功')
+      verificationCodeEffectiveSecond.value = effectiveSecond
+      const timer = setInterval(() => {
+        if (verificationCodeEffectiveSecond.value <= 0) {
+          clearInterval(timer)
+          return
+        }
+        verificationCodeEffectiveSecond.value--
+      }, 1000)
+    },
+  )
 }
 
 const switchForm = () => {

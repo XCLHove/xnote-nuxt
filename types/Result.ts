@@ -55,6 +55,10 @@ export enum ResultStatus {
    */
   VERIFICATION_CODE_EXCEPTION = 900,
   /**
+   * 需要图片验证码
+   */
+  NEED_IMAGE_VERIFICATION_CODE_EXCEPTION = 901,
+  /**
    * 笔记类型业务异常！
    */
   NOTE_TYPE_SERVICE_EXCEPTION = 1000,
