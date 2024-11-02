@@ -370,6 +370,7 @@ const shareNoteRef = ref<ShareNoteComponent>()
       v-model:current-page="page.current"
       :total="page.total"
       @change="searchUserNote"
+      :disabled="loading"
     ></Pagination>
   </div>
 </template>
