@@ -2,6 +2,10 @@
 const userStore = useUserStore()
 const { userInfo } = storeToRefs(userStore)
 
+definePageMeta({
+  layout: PageMetaUtil.layout(),
+})
+
 const {
   query: { toPath },
 } = useRoute()
