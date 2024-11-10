@@ -22,21 +22,25 @@ onMounted(() => {
     // 未登录
     if (!TokenUtil.get()) {
       ShowLoginUtil.show()
+
       const removeLoginListener = TokenUtil.onSet(() => {
         loading.value = true
-        userStore.afterRefresh(() => {
+        const removeAfterRefreshListener = userStore.afterRefresh(() => {
           loading.value = false
           useRouter().push(toPath as string)
         }, true)
+        onUnmounted(removeAfterRefreshListener)
       })
-      ShowLoginUtil.afterClose(() => {
-        removeLoginListener()
+      onUnmounted(removeLoginListener)
 
+      const removeCloseLoginFormListener = ShowLoginUtil.afterClose(() => {
         // 取消登录
         if (!TokenUtil.get()) {
           useRouter().push('/')
         }
-      })
+      }, true)
+      onUnmounted(removeCloseLoginFormListener)
+
       return
     }
 
@@ -45,7 +49,7 @@ onMounted(() => {
     const removeAfterRefreshListener = userStore.afterRefresh(() => {
       loading.value = false
       useRouter().push(toPath as string)
-    }, true)
+    })
     onUnmounted(removeAfterRefreshListener)
   })
 })
