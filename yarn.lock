@@ -308,14 +308,14 @@
   resolved "https://registry.npmmirror.com/@element-plus/icons-vue/-/icons-vue-2.3.1.tgz#1f635ad5fdd5c85ed936481525570e82b5a8307a"
   integrity sha512-XxVUZv48RZAd87ucGS48jPf6pKu0yV5UCg9f4FFwtrYxXOwWuVJo6wOvSLKEoMQKjv8GsX/mhP6UsC1lRwbUWg==
 
-"@element-plus/nuxt@^1.0.8":
-  version "1.0.10"
-  resolved "https://registry.npmmirror.com/@element-plus/nuxt/-/nuxt-1.0.10.tgz#c1c8fa917bedae728934976ccd82cc15293fdadb"
-  integrity sha512-jz8kWXr0cBc/9fN2fWdoiTVFWGVzltobZ0FIIEyG0AoXsNl2BJr7urvvscJS3UFy+zjVuFxB4FULLpx9RcwQLA==
+"@element-plus/nuxt@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.npmmirror.com/@element-plus/nuxt/-/nuxt-1.1.0.tgz#b1f2f3602f7b831cd6f2820772638ef4707bdfe0"
+  integrity sha512-SAP5B2WAS+qV9S8PikkLay8LFSCNNkTZr6/pcpmxsH/pckeZzqewfsP2RxVW94fD59lVOfHda0xe9ZQ2qeG4oA==
   dependencies:
-    "@nuxt/kit" "^3.12.3"
+    "@nuxt/kit" "^3.13.2"
     magic-string "^0.27.0"
-    unplugin "^1.11.0"
+    unplugin "^1.15.0"
 
 "@esbuild/aix-ppc64@0.20.2":
   version "0.20.2"
@@ -890,7 +890,7 @@
     which "^3.0.1"
     ws "^8.18.0"
 
-"@nuxt/kit@3.13.0", "@nuxt/kit@^3.11.2", "@nuxt/kit@^3.12.1", "@nuxt/kit@^3.12.3", "@nuxt/kit@^3.13.0", "@nuxt/kit@^3.9.0":
+"@nuxt/kit@3.13.0", "@nuxt/kit@^3.11.2", "@nuxt/kit@^3.12.1", "@nuxt/kit@^3.13.0", "@nuxt/kit@^3.9.0":
   version "3.13.0"
   resolved "https://registry.npmmirror.com/@nuxt/kit/-/kit-3.13.0.tgz#95d56b7eb2c54ad7873b4e3a9cd7c6fe3bbd3c81"
   integrity sha512-gbhSbDvYfkGQ0R2ztqTLQLHRMv+7g50kAKKuN6mbF4tL9jg7NPnQ8bAarn2I4Qx8xtmwO+qY1ABkmYMn5S1CpA==
@@ -916,6 +916,32 @@
     unimport "^3.11.0"
     untyped "^1.4.2"
 
+"@nuxt/kit@^3.13.2":
+  version "3.13.2"
+  resolved "https://registry.npmmirror.com/@nuxt/kit/-/kit-3.13.2.tgz#4c019a87e08c33ec14d1059497ba40568b82bfed"
+  integrity sha512-KvRw21zU//wdz25IeE1E5m/aFSzhJloBRAQtv+evcFeZvuroIxpIQuUqhbzuwznaUwpiWbmwlcsp5uOWmi4vwA==
+  dependencies:
+    "@nuxt/schema" "3.13.2"
+    c12 "^1.11.2"
+    consola "^3.2.3"
+    defu "^6.1.4"
+    destr "^2.0.3"
+    globby "^14.0.2"
+    hash-sum "^2.0.0"
+    ignore "^5.3.2"
+    jiti "^1.21.6"
+    klona "^2.0.6"
+    knitwork "^1.1.0"
+    mlly "^1.7.1"
+    pathe "^1.1.2"
+    pkg-types "^1.2.0"
+    scule "^1.3.0"
+    semver "^7.6.3"
+    ufo "^1.5.4"
+    unctx "^2.3.1"
+    unimport "^3.12.0"
+    untyped "^1.4.2"
+
 "@nuxt/schema@3.13.0", "@nuxt/schema@^3.13.0":
   version "3.13.0"
   resolved "https://registry.npmmirror.com/@nuxt/schema/-/schema-3.13.0.tgz#104ce5fdca095ba98268a3dfe47c92e657d08f0d"
@@ -932,6 +958,24 @@
     ufo "^1.5.4"
     uncrypto "^0.1.3"
     unimport "^3.11.0"
+    untyped "^1.4.2"
+
+"@nuxt/schema@3.13.2":
+  version "3.13.2"
+  resolved "https://registry.npmmirror.com/@nuxt/schema/-/schema-3.13.2.tgz#4c1011ebf9fd5f821900bbfc50fd5eff2e663e9b"
+  integrity sha512-CCZgpm+MkqtOMDEgF9SWgGPBXlQ01hV/6+2reDEpJuqFPGzV8HYKPBcIFvn7/z5ahtgutHLzjP71Na+hYcqSpw==
+  dependencies:
+    compatx "^0.1.8"
+    consola "^3.2.3"
+    defu "^6.1.4"
+    hookable "^5.5.3"
+    pathe "^1.1.2"
+    pkg-types "^1.2.0"
+    scule "^1.3.0"
+    std-env "^3.7.0"
+    ufo "^1.5.4"
+    uncrypto "^0.1.3"
+    unimport "^3.12.0"
     untyped "^1.4.2"
 
 "@nuxt/telemetry@^2.5.4":
@@ -1196,6 +1240,15 @@
     "@types/estree" "^1.0.0"
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
+
+"@rollup/pluginutils@^5.1.2":
+  version "5.1.3"
+  resolved "https://registry.npmmirror.com/@rollup/pluginutils/-/pluginutils-5.1.3.tgz#3001bf1a03f3ad24457591f2c259c8e514e0dbdf"
+  integrity sha512-Pnsb6f32CD2W3uCaLZIzDmeFyQ2b8UWMFI7xtwUezpcGBDVDW6y9XgAWIlARiGAo6eNF5FK5aQTr0LFyNyqq5A==
+  dependencies:
+    "@types/estree" "^1.0.0"
+    estree-walker "^2.0.2"
+    picomatch "^4.0.2"
 
 "@rollup/rollup-android-arm-eabi@4.21.2":
   version "4.21.2"
@@ -1751,6 +1804,11 @@ acorn@8.12.1, acorn@^8.11.3, acorn@^8.12.1, acorn@^8.6.0, acorn@^8.8.2:
   resolved "https://registry.npmmirror.com/acorn/-/acorn-8.12.1.tgz#71616bdccbe25e27a54439e0046e89ca76df2248"
   integrity sha512-tcpGyI9zbizT9JbV6oYE477V6mTlXvvi0T0G3SNIYE2apm/G5huBa1+K89VGeovbg+jycCrfhl3ADxErOuO6Jg==
 
+acorn@^8.14.0:
+  version "8.14.0"
+  resolved "https://registry.npmmirror.com/acorn/-/acorn-8.14.0.tgz#063e2c70cac5fb4f6467f0b11152e04c682795b0"
+  integrity sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA==
+
 agent-base@6:
   version "6.0.2"
   resolved "https://registry.npmmirror.com/agent-base/-/agent-base-6.0.2.tgz#49fff58577cfee3f37176feab4c22e00f86d7f77"
@@ -2028,6 +2086,24 @@ c12@^1.11.1:
     pathe "^1.1.2"
     perfect-debounce "^1.0.0"
     pkg-types "^1.1.1"
+    rc9 "^2.1.2"
+
+c12@^1.11.2:
+  version "1.11.2"
+  resolved "https://registry.npmmirror.com/c12/-/c12-1.11.2.tgz#f8a1e30c10f4b273894a1bcb6944f76c15b56717"
+  integrity sha512-oBs8a4uvSDO9dm8b7OCFW7+dgtVrwmwnrVXYzLm43ta7ep2jCn/0MhoUFygIWtxhyy6+/MG7/agvpY0U1Iemew==
+  dependencies:
+    chokidar "^3.6.0"
+    confbox "^0.1.7"
+    defu "^6.1.4"
+    dotenv "^16.4.5"
+    giget "^1.2.3"
+    jiti "^1.21.6"
+    mlly "^1.7.1"
+    ohash "^1.1.3"
+    pathe "^1.1.2"
+    perfect-debounce "^1.0.0"
+    pkg-types "^1.2.0"
     rc9 "^2.1.2"
 
 cac@^6.7.14:
@@ -2587,10 +2663,10 @@ electron-to-chromium@^1.5.4:
   resolved "https://registry.npmmirror.com/electron-to-chromium/-/electron-to-chromium-1.5.13.tgz#1abf0410c5344b2b829b7247e031f02810d442e6"
   integrity sha512-lbBcvtIJ4J6sS4tb5TLp1b4LyfCdMkwStzXPyAgVgTRAsep4bvrAGaBOP7ZJtQMNJpSQ9SqG4brWOroNaQtm7Q==
 
-element-plus@2.7.7:
-  version "2.7.7"
-  resolved "https://registry.npmmirror.com/element-plus/-/element-plus-2.7.7.tgz#317a4b826d577f4572ca040f2568eb751edd891d"
-  integrity sha512-7ucUiDAxevyBE8JbXBTe9ofHhS047VmWMLoksE45zZ08XSnhnyG7WUuk3gmDbAklfVMHedb9sEV3OovPUWt+Sw==
+element-plus@^2.8.7:
+  version "2.8.7"
+  resolved "https://registry.npmmirror.com/element-plus/-/element-plus-2.8.7.tgz#34770466c65ec2089cf1db805b432f479910fb51"
+  integrity sha512-oGQyFRufFOgjd872tZc+T4xQAYLlX4hj6d3ixeY13L4fFNUuc1N49JHAqJGPda0tdx3qCnjceZoh1kqqj2+tXQ==
   dependencies:
     "@ctrl/tinycolor" "^3.4.1"
     "@element-plus/icons-vue" "^2.3.1"
@@ -5216,6 +5292,25 @@ unimport@^3.11.0, unimport@^3.11.1, unimport@^3.7.2:
     strip-literal "^2.1.0"
     unplugin "^1.12.2"
 
+unimport@^3.12.0:
+  version "3.13.1"
+  resolved "https://registry.npmmirror.com/unimport/-/unimport-3.13.1.tgz#4362340e2df7edad212c693d33808189e058dded"
+  integrity sha512-nNrVzcs93yrZQOW77qnyOVHtb68LegvhYFwxFMfuuWScmwQmyVCG/NBuN8tYsaGzgQUVYv34E/af+Cc9u4og4A==
+  dependencies:
+    "@rollup/pluginutils" "^5.1.2"
+    acorn "^8.12.1"
+    escape-string-regexp "^5.0.0"
+    estree-walker "^3.0.3"
+    fast-glob "^3.3.2"
+    local-pkg "^0.5.0"
+    magic-string "^0.30.11"
+    mlly "^1.7.1"
+    pathe "^1.1.2"
+    pkg-types "^1.2.0"
+    scule "^1.3.0"
+    strip-literal "^2.1.0"
+    unplugin "^1.14.1"
+
 universalify@^2.0.0:
   version "2.0.1"
   resolved "https://registry.npmmirror.com/universalify/-/universalify-2.0.1.tgz#168efc2180964e6386d061e094df61afe239b18d"
@@ -5241,7 +5336,7 @@ unplugin-vue-router@^0.10.7:
     unplugin "^1.12.1"
     yaml "^2.5.0"
 
-unplugin@^1.10.0, unplugin@^1.11.0, unplugin@^1.12.1, unplugin@^1.12.2, unplugin@^1.3.1:
+unplugin@^1.10.0, unplugin@^1.12.1, unplugin@^1.12.2, unplugin@^1.3.1:
   version "1.12.2"
   resolved "https://registry.npmmirror.com/unplugin/-/unplugin-1.12.2.tgz#cc85aef010614394898caccf5f17002af8a4cd6f"
   integrity sha512-bEqQxeC7rxtxPZ3M5V4Djcc4lQqKPgGe3mAWZvxcSmX5jhGxll19NliaRzQSQPrk4xJZSGniK3puLWpRuZN7VQ==
@@ -5249,6 +5344,14 @@ unplugin@^1.10.0, unplugin@^1.11.0, unplugin@^1.12.1, unplugin@^1.12.2, unplugin
     acorn "^8.12.1"
     chokidar "^3.6.0"
     webpack-sources "^3.2.3"
+    webpack-virtual-modules "^0.6.2"
+
+unplugin@^1.14.1, unplugin@^1.15.0:
+  version "1.15.0"
+  resolved "https://registry.npmmirror.com/unplugin/-/unplugin-1.15.0.tgz#cd1e92e537ab14a03354d6f83f29d536fac2e5a9"
+  integrity sha512-jTPIs63W+DUEDW207ztbaoO7cQ4p5aVaB823LSlxpsFEU3Mykwxf3ZGC/wzxFJeZlASZYgVrWeo7LgOrqJZ8RA==
+  dependencies:
+    acorn "^8.14.0"
     webpack-virtual-modules "^0.6.2"
 
 unstorage@^1.10.2:

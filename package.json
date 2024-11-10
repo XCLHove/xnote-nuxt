@@ -18,11 +18,11 @@
     "vue": "latest"
   },
   "devDependencies": {
-    "@element-plus/nuxt": "^1.0.8",
+    "@element-plus/nuxt": "^1.1.0",
     "@pinia/nuxt": "^0.5.3",
     "@types/dompurify": "^3.0.5",
     "@vueuse/nuxt": "^10.11.1",
-    "element-plus": "2.7.7",
+    "element-plus": "^2.8.7",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
     "prettier": "^3.3.3",
