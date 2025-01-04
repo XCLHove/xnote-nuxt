@@ -41,11 +41,9 @@ const uploadImage = (files: File[]) => {
       reject()
       return
     }
-    useClipboard()
-      .copy(imagesUrl)
-      .then(() => {
-        ElMessage.success('图片上传成功，url已复制到剪贴板，直接粘贴即可')
-      })
+    ClipboardUtil.copy(imagesUrl).then(() => {
+      ElMessage.success('图片上传成功，url已复制到剪贴板，直接粘贴即可')
+    })
     resolve(null)
   })
 }
