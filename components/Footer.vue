@@ -2,15 +2,17 @@
 import { getConfigApi } from '~/apis/nuxtServerApi'
 
 const ipc = ref<string>()
+const disablePowerBy = ref(false)
 onMounted(() => {
   getConfigApi().then((config) => {
     ipc.value = config.ipc
+    disablePowerBy.value = config.disablePowerBy
   })
 })
 </script>
 
 <template>
-  <div class="box">
+  <div v-if="!disablePowerBy" class="box">
     <el-text> power&nbsp;by&nbsp; </el-text>
     <el-link type="primary" href="https://github.com/xclhove/xnote-springboot"
       >xnote</el-link
