@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "axios": "^1.7.4",
+    "crypto-js": "^4.2.0",
     "dompurify": "^3.1.6",
     "nuxt": "^3.11.1",
     "vditor": "^3.10.5",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@element-plus/nuxt": "^1.1.0",
     "@pinia/nuxt": "^0.5.3",
+    "@types/crypto-js": "^4.2.2",
     "@types/dompurify": "^3.0.5",
     "@vueuse/nuxt": "^10.11.1",
     "element-plus": "^2.8.7",

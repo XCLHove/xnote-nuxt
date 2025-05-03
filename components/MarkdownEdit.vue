@@ -32,18 +32,12 @@ const uploadImage = (files: File[]) => {
     for (const file of files) {
       await uploadImageApi(file)
         .then(({ data: imageName }) => {
-          imagesUrl += `![${file.name}](/api/image/name/${imageName})\n`
+          imagesUrl += `![${file.name}](/api/image/name/${imageName})`
         })
         .catch(() => {})
     }
 
-    if (!imagesUrl) {
-      reject()
-      return
-    }
-    ClipboardUtil.copy(imagesUrl).then(() => {
-      ElMessage.success('图片上传成功，url已复制到剪贴板，直接粘贴即可')
-    })
+    vditor?.insertValue(imagesUrl, true)
     resolve(null)
   })
 }
